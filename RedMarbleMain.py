@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # temperatue -90 to 20 celcius
 
+import pygame
+
 import sys
 import socket
 import time
@@ -141,6 +143,8 @@ class RedMarbleMain(QMainWindow):
 			self.windWidgets[iter].createWind()
 
 		self.timeWidget.setHour(self.timeThread.countHour)
+		self.mapDisplay.isFlipped = not self.mapDisplay.isFlipped
+		self.mapDisplay.repaint()
 		print 'update hour'
 		pass
 	def updateDay(self):

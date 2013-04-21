@@ -11,6 +11,7 @@ class MapDisplay(QWidget):
 		self.parent = parent
 		self.resize(self.width,self.height)
 		self.initMap()
+		self.isFlipped = False
 	
 	def paintEvent(self, event):
 		qp = QPainter()
@@ -35,9 +36,9 @@ class MapDisplay(QWidget):
 		self.mineral_count = 6000;
 		self.power_count = 100;
 		self.public_interest = 0;
-
+		self.habitat_locations = [];
 		self.rover_orientation = "forward"
-		self.collidable = ["y", "s", "w", "r"]
+		self.collidable = ["y", "s", "w", "r", "h"]
 		self.file_directory = "resources/"
 		self.y_off = 0;
 		self.left_bound = 0;
@@ -121,6 +122,14 @@ class MapDisplay(QWidget):
 			if self.mapMatrix[t[0]][t[1]] != 'g':
 				qp.drawText((t[0]-self.x_off)*64,(t[1]-self.y_off)*64,(str(t[2])+"%"))
 
+###########################################################
+		for t in self.habitat_locations:
+			qp.setPen(QColor(255,255,255))
+			qp.setBrush(QColor(100,100,100))
+			qp.setFont(QFont('Times',13,75))
+			if self.mapMatrix[t[0]][t[1]] != 'g':
+				qp.drawText((t[0]-self.x_off)*64,(t[1]-self.y_off)*64,(str(t[2])+"%"))
+############################################################
 	def tileCases(self, tile):
 		if 'x' == tile:
 			return self.file_directory + "Ground1.png";
@@ -129,13 +138,25 @@ class MapDisplay(QWidget):
 		elif 'd' == tile:
 			return self.file_directory + "Ground2.png";
 		elif 'h' == tile:
-			return self.file_directory + "Habitat1.png";
+			if not self.isFlipped:
+				return self.file_directory + "Habitat1.png";
+			else:
+				return self.file_directory + "Habitat2.png";
 		elif 'w' == tile:
-			return self.file_directory + "Wind1.png";
+			if not self.isFlipped:
+				return self.file_directory + "Wind1.png";
+			else:
+				return self.file_directory + "Wind2.png";
 		elif 's' == tile:
-			return self.file_directory + "Solar1.png";
+			if not self.isFlipped:
+				return self.file_directory + "Solar1.png";
+			else:
+				return self.file_directory + "Solar2.png";
 		elif 'r' == tile:
-			return self.file_directory + "Research1.png";
+			if not self.isFlipped:
+				return self.file_directory + "Research1.png";
+			else:
+				return self.file_directory + "Research2.png";
 		elif 'm' == tile:
 			return self.file_directory + "Mineral.png";
 		elif 'g' == tile:
@@ -245,6 +266,15 @@ class MapDisplay(QWidget):
 				print self.mineral_count;
 				if (t[2] > 100):
 					t[2] = 100
+		for t in self.habitat_locations:
+			if (t[0] == X and t[1] == Y and t[2] < 100):
+				t[2] += 10;
+				self.mineral_count -= 5;
+				print self.mineral_count;
+				if (t[2] > 100):
+					t[2] = 100
+		self.parent.metalWidget.setMetal(self.mineral_count)
+		self.parent.metalWidget.repaint()
 		self.repaint();
 
 	def power_down(self):
@@ -269,12 +299,18 @@ class MapDisplay(QWidget):
 			if (t[2] < 0):
 				self.mapMatrix[t[0]][t[1]] = "g"
 				self.wind_locations.remove(t)
+		for t in self.habitat_locations:
+			t[2] -= 3;
+			if (t[2] < 0):
+				self.mapMatrix[t[0]][t[1]] = "g"
+				self.habitat_locations.remove(t)
 		self.repaint()
 	def createHabitat(self):
 		print "Habitat was planted!"
 		self.mineral_count -= 200
 		self.public_interest += 1;
 		self.mapMatrix[self.rover_X + self.x_off][self.rover_Y + self.y_off] = 'h';
+		self.habitat_locations.append([self.rover_X + self.x_off, self.rover_Y + self.y_off, 100])
 		self.repaint()
 	def createSolarPanel(self):
 		print "Solar panel was planted!"
