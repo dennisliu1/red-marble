@@ -28,12 +28,13 @@ class MapDisplay(QWidget):
 		qp.drawText(50,50, 'DRAW MAP')
 
 	def initMap(self):
-		self.known_mining_areas = [[6,2,10], [9,8,8]];
+		self.known_mining_areas = [[6,2,10], [9,8,8], [20,10,8], [30,18,8], [12,24,20], [15, 32, 15], [16, 32, 15], [15, 33, 15], [10, 10, 15], [12, 10, 15], [12, 17, 15], [1, 12, 18], [30, 12, 18], [22, 12, 18]];
 		self.solar_locations = [];
 		self.research_locations = [];
 		self.wind_locations = [];
 		self.mineral_count = 6000;
 		self.power_count = 100;
+		self.public_interest = 0;
 
 		self.rover_orientation = "forward"
 		self.collidable = ["y", "s", "w", "r"]
@@ -136,7 +137,7 @@ class MapDisplay(QWidget):
 		elif 'r' == tile:
 			return self.file_directory + "Research1.png";
 		elif 'm' == tile:
-			return self.file_directory + "Minerals1.png";
+			return self.file_directory + "Mineral.png";
 		elif 'g' == tile:
 			return self.file_directory + "Wreck.png";
 		else:
@@ -262,30 +263,38 @@ class MapDisplay(QWidget):
 			t[2] -= 3;
 			if (t[2] < 0):
 				self.mapMatrix[t[0]][t[1]] = "g"
-				self.solar_locations.remove(t)
+				self.research_locations.remove(t)
 		for t in self.wind_locations:
 			t[2] -= 3;
 			if (t[2] < 0):
 				self.mapMatrix[t[0]][t[1]] = "g"
-				self.solar_locations.remove(t)
+				self.wind_locations.remove(t)
 		self.repaint()
 	def createHabitat(self):
 		print "Habitat was planted!"
+		self.mineral_count -= 200
+		self.public_interest += 1;
 		self.mapMatrix[self.rover_X + self.x_off][self.rover_Y + self.y_off] = 'h';
 		self.repaint()
 	def createSolarPanel(self):
 		print "Solar panel was planted!"
+		self.mineral_count -= 200
+		self.public_interest += 1;
 		self.mapMatrix[self.rover_X + self.x_off][self.rover_Y + self.y_off] = 's';
 		self.solar_locations.append([self.rover_X + self.x_off, self.rover_Y + self.y_off, 100])
 		print self.solar_locations
 		self.repaint()
 	def createWindMill(self):
 		print "Wind mill was planted!"
+		self.mineral_count -= 200
+		self.public_interest += 1;
 		self.mapMatrix[self.rover_X + self.x_off][self.rover_Y + self.y_off] = 'w';
 		self.wind_locations.append([self.rover_X + self.x_off, self.rover_Y + self.y_off, 100])
 		self.repaint()
 	def createResearchCenter(self):
 		print "Research center was planted!"
+		self.mineral_count -= 200
+		self.public_interest += 1;
 		self.mapMatrix[self.rover_X + self.x_off][self.rover_Y + self.y_off] = 'r';
 		self.research_locations.append([self.rover_X + self.x_off, self.rover_Y + self.y_off, 100])
 		self.repaint()
@@ -305,7 +314,7 @@ class MapDisplay(QWidget):
 						self.known_mining_areas.remove(tup)
 						self.repaint()
 
-					self.mineral_count += 1
+					self.mineral_count += 5
 					print currentminerals
 			self.repaint()
 		else:

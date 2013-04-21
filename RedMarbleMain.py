@@ -93,18 +93,26 @@ class RedMarbleMain(QMainWindow):
 				self.mapDisplay.createHabitat()
 				self.metalWidget.setMetal(self.mapDisplay.mineral_count)
 				self.metalWidget.repaint()
+				self.piWidget.setPI(self.mapDisplay.public_interest)
+				self.piWidget.repaint()
 			elif e.key() == Qt.Key_2:
 				self.mapDisplay.createSolarPanel()
 				self.metalWidget.setMetal(self.mapDisplay.mineral_count)
 				self.metalWidget.repaint()
+				self.piWidget.setPI(self.mapDisplay.public_interest)
+				self.piWidget.repaint()
 			elif e.key() == Qt.Key_3:
 				self.mapDisplay.createWindMill()
 				self.metalWidget.setMetal(self.mapDisplay.mineral_count)
 				self.metalWidget.repaint()
+				self.piWidget.setPI(self.mapDisplay.public_interest)
+				self.piWidget.repaint()
 			elif e.key() == Qt.Key_4:
 				self.mapDisplay.createResearchCenter()
 				self.metalWidget.setMetal(self.mapDisplay.mineral_count)
 				self.metalWidget.repaint()
+				self.piWidget.setPI(self.mapDisplay.public_interest)
+				self.piWidget.repaint()
 			elif e.key() == Qt.Key_D:
 				self.mapDisplay.decrease_building()
 			elif e.key() == Qt.Key_M:
